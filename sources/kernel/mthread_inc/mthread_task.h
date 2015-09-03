@@ -2,7 +2,7 @@
 #define MTHREAD_CONFIG
 #include "inc/GlobalIncludeFile.h"
 
-/// Значение всех задач
+/// Всего задач
 #define VALUE_TASKS             2
 /// Минимальный размер стека в словах (слово - 4 байта)
 #define MINIMUM_SIZE_STACK_WORD 16
