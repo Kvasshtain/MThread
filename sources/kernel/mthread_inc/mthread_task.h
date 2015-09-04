@@ -1,6 +1,5 @@
 #ifndef MTHREAD_CONFIG
 #define MTHREAD_CONFIG
-#include "inc/GlobalIncludeFile.h"
 
 /// Всего задач
 #define VALUE_TASKS             2

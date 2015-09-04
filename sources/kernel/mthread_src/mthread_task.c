@@ -1,5 +1,5 @@
-#include "inc/GlobalIncludeFile.h"
-#include "inc/MThread_inc/mthread_task.h"
+#include <mthread_port.h>
+#include <mthread_task.h>
 
 /// Указатель на переменную в которую нужно сохранить текущие положение стека
 uint32_t **pPointer_Save_Context_Stask;
@@ -52,7 +52,6 @@ uint8_t sTask_Switch(void)
     return c;
 }
 
-uint32_t counter = 0;
 
 //------------------------------------------------------
 // Выбирает задачу, затем вызывает переключение контекста
@@ -115,9 +114,5 @@ void SysTick_Handler(void)
 //------------------------------------------------------
 void Delay(uint32_t value)
 {
-    while(value--) {
-        __ASM("nop");
-        __ASM("nop");
-        __ASM("nop");
-    }
+    while(value--);
 }

@@ -1,6 +1,6 @@
-#include "inc/GlobalIncludeFile.h"
-#include "inc/MThread_inc/mthread_task.h"
-#include "inc/MThread_inc/mmutex.h"
+#include <mthread_port.h>
+#include <mthread_task.h>
+#include <mmutex.h>
 
 
 
