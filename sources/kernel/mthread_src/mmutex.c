@@ -11,8 +11,8 @@
 //------------------------------------------------------
 void eMutex_lock(struct Mmutex *pMmutex)
 {
+    _repeat:	
     __disable_irq();
-    _repeat:
     // Можно захватить
     if((pMmutex->lock == NULL) || (pMmutex->lock == sTask_Status.pTask_Descriptor)) {
         // Проверка, кто-то ожидает мьютекс ?
