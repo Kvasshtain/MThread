@@ -1,6 +1,6 @@
-#include <mthread_port.h>
-#include <mthread_task.h>
-#include <mmutex.h>
+#include "inc/GlobalIncludeFile.h"
+#include "inc/MThread_inc/mthread_task.h"
+#include "inc/MThread_inc/mmutex.h"
 
 
 
@@ -11,34 +11,35 @@
 //------------------------------------------------------
 void eMutex_lock(struct Mmutex *pMmutex)
 {
-    _repeat:	
-    __disable_irq();
-    // Можно захватить
-    if((pMmutex->lock == NULL) || (pMmutex->lock == sTask_Status.pTask_Descriptor)) {
-        // Проверка, кто-то ожидает мьютекс ?
-        if(pMmutex->Inquiry == NULL) {
-            // Блокируем мьютекс
-            // Ресурс успешно занят
-            pMmutex->lock = sTask_Status.pTask_Descriptor;
-            __enable_irq();
-        } else {
-            // Сброс
+    while(1) {
+        __disable_irq();
+        // Свободный ?
+        if(pMmutex->lock == NULL) {
+            // Проверка, кто-то ожидает мьютекс ?
+            if(pMmutex->Inquiry == NULL) {
+                // Блокируем мьютекс
+                // Ресурс успешно занят
+                pMmutex->lock = sTask_Status.pTask_Descriptor;
+                __enable_irq();
+                return;
+            }
             pMmutex->Inquiry = NULL;
             __enable_irq();
-            // Вызываем eTask_Schedule
-            // Блокируем поток до тех пор пока не захватим мьютекс
             sTask_Schedule();
-            goto _repeat;
+            continue;
         }
-        return;
+
+        // Занят нами ?
+        if(pMmutex->lock == sTask_Status.pTask_Descriptor) {
+            __enable_irq();
+            return;
+        }
+
+        pMmutex->Inquiry = 1;
+        __enable_irq();
+        // Блокируем поток до тех пор пока не захватим мьютекс
+        sTask_Schedule();
     }
-    // Запрос на захват мьютекса
-    pMmutex->Inquiry = 1;
-    __enable_irq();
-    // Вызываем eTask_Schedule
-    // Блокируем поток до тех пор пока не захватим мьютекс
-    sTask_Schedule();
-    goto _repeat;
 }
 
 //------------------------------------------------------
@@ -49,8 +50,8 @@ void eMutex_lock(struct Mmutex *pMmutex)
 uint8_t eMutex_try_lock(struct Mmutex *pMmutex)
 {
     __disable_irq();
-    // Можно захватить
-    if((pMmutex->lock == NULL) || (pMmutex->lock == sTask_Status.pTask_Descriptor)) {
+    // Свободный ?
+    if(pMmutex->lock == NULL) {
         // Проверка, кто-то ожидает мьютекс ?
         if(pMmutex->Inquiry == NULL) {
             // Блокируем мьютекс
@@ -58,18 +59,21 @@ uint8_t eMutex_try_lock(struct Mmutex *pMmutex)
             pMmutex->lock = sTask_Status.pTask_Descriptor;
             __enable_irq();
             return 0;
-        } else {
-            // Сброс
-            pMmutex->Inquiry = NULL;
-            __enable_irq();
-            // Вызываем eTask_Schedule
-            sTask_Schedule();
-            return -1;
         }
-    } else {
+        pMmutex->Inquiry = NULL;
         __enable_irq();
+        sTask_Schedule();
         return -1;
     }
+
+    // Занят нами ?
+    if(pMmutex->lock == sTask_Status.pTask_Descriptor) {
+        __enable_irq();
+        return 0;
+    }
+
+    __enable_irq();
+    return -1;
 }
 
 //------------------------------------------------------
