@@ -18,44 +18,6 @@ MEMORY
 .ARM.attributes — ARM-специфичные атрибуты файла.
 */
 
-/*
-SECTIONS
-{
-    .isr_vector : ALIGN(4)
-    {
-        _start_isr_vector = .;
-        KEEP(*(.isr_vector))
-        _ent_isr_vector = .;
-        . = 0xc8 - _ent_isr_vector + ALIGN(4);
-        KEEP(*(.loop))
-    } > FLASH = 0xff
-
-    .text : ALIGN(4)
-    {
-        *(.text)
-        *(.text*)
-        *(.rodata)
-        *(.rodata*)
-    } > FLASH
-
-    .data : AT( ADDR(.text) + SIZEOF(.text) ) ALIGN(4)
-    {
-        . = ALIGN(4);
-        *(.data)
-        *(.data*)
-        . = ALIGN(4);
-    } > RAM
-
-    .bss : ALIGN(4)
-    {
-        . = ALIGN(4);
-        *(.bss)
-        *(.bss*)
-        . = ALIGN(4);
-    } > RAM
-}
-*/
-
 SECTIONS
 {
     .isr_vector : ALIGN(4)
