@@ -1,7 +1,7 @@
 #===========================================================================
 # MAIN
 #===========================================================================
-NAMEPROJ   =f051r8_RTOS_context
+NAMEPROJ   =test_stm32f051r8
 
 TOOLCHAIN  =
 PATH_PROJ  =../file/
@@ -64,6 +64,7 @@ mmutex.o: $(MThread_p_src)mmutex.c $(MThread_inc)
 # MAIN
 #===========================================================================
 AFINC= \
+	$(PATH_INC)globalIncludeFile.h \
 	$(PATH_INC)main.h \
 	$(PATH_INC)startup_stm32f0xx.h \
 	$(PATH_INC)phisic.h

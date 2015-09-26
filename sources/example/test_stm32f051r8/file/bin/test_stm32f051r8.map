@@ -1,0 +1,235 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+sTask_Status        0xc               mthread_task.o
+stack_b             0x100             main.o
+pPointer_Save_Context_Stask
+                    0x4               mthread_task.o
+eTask_Element       0x28              mthread_task.o
+pPointer_Load_Context_Stask
+                    0x4               mthread_task.o
+stack_a             0x100             main.o
+vB                  0x4               main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x08000000         0x00010000         xr
+RAM              0x20000000         0x00002000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+
+.isr_vector     0x08000000       0xd0
+                0x08000000                _start_isr_vector = .
+ *(.isr_vector)
+ .isr_vector    0x08000000       0xc4 startup_stm32f0xx.o
+                0x08000000                ArrayInterrapt
+                0x080000c4                _end_isr_vector = .
+                0x000000c8                . = ((0xc8 - _end_isr_vector) + ALIGN (0x4))
+ *fill*         0x080000c4        0x4 ff
+ *(.loop)
+ .loop          0x080000c8        0x8 startup_stm32f0xx.o
+                0x080000c8                loop
+
+.text           0x080000d0      0x6e4
+                0x080000d0                _start_text = .
+ *(.text)
+ .text          0x080000d0        0x0 startup.o
+ .text          0x080000d0       0xd0 startup_stm32f0xx.o
+                0x080000d0                HardFault_Handler
+                0x080000f0                ro_data_init
+                0x0800011c                bss_init
+                0x08000148                Reset_Handler
+ .text          0x080001a0      0x1d4 main.o
+                0x080001a0                Oscillator_int
+                0x080001cc                Init_Hardware
+                0x080001e0                PendSV_Start
+                0x080001fc                Thread_A
+                0x08000290                Thread_B
+                0x08000324                main
+ .text          0x08000374        0x8 phisic.o
+                0x08000374                Port_Init
+ .text          0x0800037c       0x44 mthread_port.o
+                0x0800037c                PendSV_Handler
+ .text          0x080003c0      0x314 mthread_task.o
+                0x080004dc                eTask_Create
+                0x08000548                sTask_Switch
+                0x08000568                sTask_Schedule
+                0x080005f4                eStart_Schedule
+                0x080006ac                SysTick_Handler
+                0x080006b8                Delay
+ .text          0x080006d4       0xe0 mmutex.o
+                0x080006d4                eMutex_lock
+                0x08000730                eMutex_try_lock
+                0x0800078c                eMutex_unlock
+ *(.text*)
+ *(.data_flash)
+                0x080007b4                _end_text = .
+
+.glue_7         0x080007b4        0x0
+ .glue_7        0x00000000        0x0 linker stubs
+
+.glue_7t        0x080007b4        0x0
+ .glue_7t       0x00000000        0x0 linker stubs
+
+.vfp11_veneer   0x080007b4        0x0
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x080007b4        0x0
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.iplt           0x080007b4        0x0
+ .iplt          0x00000000        0x0 startup_stm32f0xx.o
+
+.rel.dyn        0x080007b4        0x0
+ .rel.iplt      0x00000000        0x0 startup_stm32f0xx.o
+
+.rodata         0x20000000        0x0 load address 0x080007b4
+                0x20000000                _start_rodata = .
+ *(.rodata)
+ *(.rodata*)
+                0x20000000                _end_rodata = .
+
+.data           0x20000000        0x8 load address 0x080007b4
+                0x20000000                _start_data = .
+ *(.data)
+ .data          0x20000000        0x0 startup.o
+ .data          0x20000000        0x0 startup_stm32f0xx.o
+ .data          0x20000000        0x8 main.o
+                0x20000000                OS_PSPs
+                0x20000004                vA
+ .data          0x20000008        0x0 phisic.o
+ .data          0x20000008        0x0 mthread_port.o
+ .data          0x20000008        0x0 mthread_task.o
+ .data          0x20000008        0x0 mmutex.o
+ *(.data*)
+                0x20000008                _end_data = .
+
+.igot.plt       0x20000008        0x0 load address 0x080007bc
+ .igot.plt      0x00000000        0x0 startup_stm32f0xx.o
+
+.bss            0x20000008      0x24c load address 0x080007bc
+                0x20000008                _start_bss = .
+ *(.bss)
+ .bss           0x20000008        0x0 startup.o
+ .bss           0x20000008        0x0 startup_stm32f0xx.o
+ .bss           0x20000008        0x8 main.o
+                0x20000008                MutexA
+ .bss           0x20000010        0x0 phisic.o
+ .bss           0x20000010        0x0 mthread_port.o
+ .bss           0x20000010        0x1 mthread_task.o
+ .bss           0x20000011        0x0 mmutex.o
+ *(.bss*)
+                0x20000011                _end_bss = .
+ *fill*         0x20000011        0x3 
+ COMMON         0x20000014      0x204 main.o
+                0x20000014                stack_b
+                0x20000114                stack_a
+                0x20000214                vB
+ COMMON         0x20000218       0x3c mthread_task.o
+                0x20000218                sTask_Status
+                0x20000224                pPointer_Save_Context_Stask
+                0x20000228                eTask_Element
+                0x20000250                pPointer_Load_Context_Stask
+                0x00000000                _size_rodata = SIZEOF (.rodata)
+                0x00000008                _size_data = SIZEOF (.data)
+                0x0000024c                _size_bss = SIZEOF (.bss)
+                0x080007b4                _start_rodata_copi = _end_text
+                0x080007b4                _start_data_copi = (_end_text + _size_rodata)
+                0x080007bc                _start_bss_copi = ((_end_text + _size_rodata) + _size_data)
+LOAD startup.o
+LOAD startup_stm32f0xx.o
+LOAD main.o
+LOAD phisic.o
+LOAD mthread_port.o
+LOAD mthread_task.o
+LOAD mmutex.o
+OUTPUT(../file/bin/test_stm32f051r8.elf elf32-littlearm)
+
+.ARM.attributes
+                0x00000000       0x2d
+ .ARM.attributes
+                0x00000000       0x21 startup.o
+ .ARM.attributes
+                0x00000021       0x31 startup_stm32f0xx.o
+ .ARM.attributes
+                0x00000052       0x31 main.o
+ .ARM.attributes
+                0x00000083       0x31 phisic.o
+ .ARM.attributes
+                0x000000b4       0x21 mthread_port.o
+ .ARM.attributes
+                0x000000d5       0x31 mthread_task.o
+ .ARM.attributes
+                0x00000106       0x31 mmutex.o
+
+.comment        0x00000000       0x70
+ .comment       0x00000000       0x70 startup_stm32f0xx.o
+                                 0x71 (size before relaxing)
+ .comment       0x00000000       0x71 main.o
+ .comment       0x00000000       0x71 phisic.o
+ .comment       0x00000000       0x71 mthread_task.o
+ .comment       0x00000000       0x71 mmutex.o
+
+.debug_info     0x00000000     0x10bd
+ .debug_info    0x00000000      0x2c2 startup_stm32f0xx.o
+ .debug_info    0x000002c2      0x4b5 main.o
+ .debug_info    0x00000777       0x84 phisic.o
+ .debug_info    0x000007fb       0xcb mthread_port.o
+ .debug_info    0x000008c6      0x5d5 mthread_task.o
+ .debug_info    0x00000e9b      0x222 mmutex.o
+
+.debug_abbrev   0x00000000      0x616
+ .debug_abbrev  0x00000000      0x130 startup_stm32f0xx.o
+ .debug_abbrev  0x00000130      0x174 main.o
+ .debug_abbrev  0x000002a4       0x42 phisic.o
+ .debug_abbrev  0x000002e6       0x14 mthread_port.o
+ .debug_abbrev  0x000002fa      0x21e mthread_task.o
+ .debug_abbrev  0x00000518       0xfe mmutex.o
+
+.debug_aranges  0x00000000       0xc8
+ .debug_aranges
+                0x00000000       0x28 startup_stm32f0xx.o
+ .debug_aranges
+                0x00000028       0x20 main.o
+ .debug_aranges
+                0x00000048       0x20 phisic.o
+ .debug_aranges
+                0x00000068       0x20 mthread_port.o
+ .debug_aranges
+                0x00000088       0x20 mthread_task.o
+ .debug_aranges
+                0x000000a8       0x20 mmutex.o
+
+.debug_ranges   0x00000000       0x18
+ .debug_ranges  0x00000000       0x18 startup_stm32f0xx.o
+
+.debug_line     0x00000000      0x7fd
+ .debug_line    0x00000000      0x175 startup_stm32f0xx.o
+ .debug_line    0x00000175      0x1f9 main.o
+ .debug_line    0x0000036e       0x45 phisic.o
+ .debug_line    0x000003b3       0x8c mthread_port.o
+ .debug_line    0x0000043f      0x1e6 mthread_task.o
+ .debug_line    0x00000625      0x1d8 mmutex.o
+
+.debug_str      0x00000000      0x7f0
+ .debug_str     0x00000000      0x2b2 startup_stm32f0xx.o
+                                0x2e6 (size before relaxing)
+ .debug_str     0x000002b2      0x17e main.o
+                                0x37f (size before relaxing)
+ .debug_str     0x00000430       0x1f phisic.o
+                                0x193 (size before relaxing)
+ .debug_str     0x0000044f      0x33c mthread_task.o
+                                0x5a6 (size before relaxing)
+ .debug_str     0x0000078b       0x65 mmutex.o
+                                0x262 (size before relaxing)
+
+.debug_frame    0x00000000      0x30c
+ .debug_frame   0x00000000       0xa4 startup_stm32f0xx.o
+ .debug_frame   0x000000a4       0xc4 main.o
+ .debug_frame   0x00000168       0x2c phisic.o
+ .debug_frame   0x00000194      0x108 mthread_task.o
+ .debug_frame   0x0000029c       0x70 mmutex.o
