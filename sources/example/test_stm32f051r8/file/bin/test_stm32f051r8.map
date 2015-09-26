@@ -34,7 +34,7 @@ Linker script and memory map
  .loop          0x080000c8        0x8 startup_stm32f0xx.o
                 0x080000c8                loop
 
-.text           0x080000d0      0x6e4
+.text           0x080000d0      0x6e0
                 0x080000d0                _start_text = .
  *(.text)
  .text          0x080000d0        0x0 startup.o
@@ -61,39 +61,39 @@ Linker script and memory map
                 0x080005f4                eStart_Schedule
                 0x080006ac                SysTick_Handler
                 0x080006b8                Delay
- .text          0x080006d4       0xe0 mmutex.o
+ .text          0x080006d4       0xdc mmutex.o
                 0x080006d4                eMutex_lock
                 0x08000730                eMutex_try_lock
                 0x0800078c                eMutex_unlock
  *(.text*)
  *(.data_flash)
-                0x080007b4                _end_text = .
+                0x080007b0                _end_text = .
 
-.glue_7         0x080007b4        0x0
+.glue_7         0x080007b0        0x0
  .glue_7        0x00000000        0x0 linker stubs
 
-.glue_7t        0x080007b4        0x0
+.glue_7t        0x080007b0        0x0
  .glue_7t       0x00000000        0x0 linker stubs
 
-.vfp11_veneer   0x080007b4        0x0
+.vfp11_veneer   0x080007b0        0x0
  .vfp11_veneer  0x00000000        0x0 linker stubs
 
-.v4_bx          0x080007b4        0x0
+.v4_bx          0x080007b0        0x0
  .v4_bx         0x00000000        0x0 linker stubs
 
-.iplt           0x080007b4        0x0
+.iplt           0x080007b0        0x0
  .iplt          0x00000000        0x0 startup_stm32f0xx.o
 
-.rel.dyn        0x080007b4        0x0
+.rel.dyn        0x080007b0        0x0
  .rel.iplt      0x00000000        0x0 startup_stm32f0xx.o
 
-.rodata         0x20000000        0x0 load address 0x080007b4
+.rodata         0x20000000        0x0 load address 0x080007b0
                 0x20000000                _start_rodata = .
  *(.rodata)
  *(.rodata*)
                 0x20000000                _end_rodata = .
 
-.data           0x20000000        0x8 load address 0x080007b4
+.data           0x20000000        0x8 load address 0x080007b0
                 0x20000000                _start_data = .
  *(.data)
  .data          0x20000000        0x0 startup.o
@@ -108,10 +108,10 @@ Linker script and memory map
  *(.data*)
                 0x20000008                _end_data = .
 
-.igot.plt       0x20000008        0x0 load address 0x080007bc
+.igot.plt       0x20000008        0x0 load address 0x080007b8
  .igot.plt      0x00000000        0x0 startup_stm32f0xx.o
 
-.bss            0x20000008      0x24c load address 0x080007bc
+.bss            0x20000008      0x24c load address 0x080007b8
                 0x20000008                _start_bss = .
  *(.bss)
  .bss           0x20000008        0x0 startup.o
@@ -137,9 +137,9 @@ Linker script and memory map
                 0x00000000                _size_rodata = SIZEOF (.rodata)
                 0x00000008                _size_data = SIZEOF (.data)
                 0x0000024c                _size_bss = SIZEOF (.bss)
-                0x080007b4                _start_rodata_copi = _end_text
-                0x080007b4                _start_data_copi = (_end_text + _size_rodata)
-                0x080007bc                _start_bss_copi = ((_end_text + _size_rodata) + _size_data)
+                0x080007b0                _start_rodata_copi = _end_text
+                0x080007b0                _start_data_copi = (_end_text + _size_rodata)
+                0x080007b8                _start_bss_copi = ((_end_text + _size_rodata) + _size_data)
 LOAD startup.o
 LOAD startup_stm32f0xx.o
 LOAD main.o
@@ -207,13 +207,13 @@ OUTPUT(../file/bin/test_stm32f051r8.elf elf32-littlearm)
 .debug_ranges   0x00000000       0x18
  .debug_ranges  0x00000000       0x18 startup_stm32f0xx.o
 
-.debug_line     0x00000000      0x7fd
+.debug_line     0x00000000      0x7fc
  .debug_line    0x00000000      0x175 startup_stm32f0xx.o
  .debug_line    0x00000175      0x1f9 main.o
  .debug_line    0x0000036e       0x45 phisic.o
  .debug_line    0x000003b3       0x8c mthread_port.o
  .debug_line    0x0000043f      0x1e6 mthread_task.o
- .debug_line    0x00000625      0x1d8 mmutex.o
+ .debug_line    0x00000625      0x1d7 mmutex.o
 
 .debug_str      0x00000000      0x7f0
  .debug_str     0x00000000      0x2b2 startup_stm32f0xx.o
