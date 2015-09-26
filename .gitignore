@@ -24,7 +24,9 @@
 
 
 # Binary files
-file/bin/
+*.bin
+*.asm
+*.map
 
 
 
