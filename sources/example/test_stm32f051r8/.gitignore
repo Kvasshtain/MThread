@@ -24,7 +24,8 @@
 
 
 # Binary files
-/bin
+bin/
+.asm
 
 
 
