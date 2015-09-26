@@ -85,6 +85,5 @@ void eMutex_unlock(struct Mmutex *pMmutex)
     if(pMmutex->lock == sTask_Status.pTask_Descriptor) {
         pMmutex->lock = NULL;
         // Ресурс успешно разблокирован
-        return;
     }
 }
