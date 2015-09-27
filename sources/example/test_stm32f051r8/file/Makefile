@@ -61,14 +61,18 @@ MThread_inc= \
 	$(MThread_p_mthread_inc)mutex.h
 	
 MThread_opj= \
-	port.o \
+	port_s.o \
+	port_c.o \
 	task.o \
 	mutex.o
 
 
 
-port.o: $(MThread_p_port_src)$(MThread_Platform)/port.s $(MThread_inc)
-	$(CC) $(COMPILOP) -c $(MThread_p_port_src)$(MThread_Platform)/port.s -o port.o
+port_s.o: $(MThread_p_port_src)$(MThread_Platform)/port.s $(MThread_inc)
+	$(CC) $(COMPILOP) -c $(MThread_p_port_src)$(MThread_Platform)/port.s -o port_s.o
+	
+port_c.o: $(MThread_p_port_src)$(MThread_Platform)/port.c $(MThread_inc)
+	$(CC) $(COMPILOP) -c $(MThread_p_port_src)$(MThread_Platform)/port.c -o port_c.o
 
 task.o: $(MThread_p_mthread_src)task.c $(MThread_inc)
 	$(CC) $(COMPILOP) -c $(MThread_p_mthread_src)task.c -o task.o
@@ -83,7 +87,7 @@ mutex.o: $(MThread_p_mthread_src)mutex.c $(MThread_inc)
 #===========================================================================
 MAIN_I     =-I$(PATH_INC) \
             -I$(PATH_INC)cmsis \
-			-I$(PATH_INC)cmsis/Include \
+            -I$(PATH_INC)cmsis/Include \
             $(MThread_I)
 			
 COMPILOP   =-g -O0 -nostdlib -ffreestanding -Wall -mthumb  -mcpu=cortex-m0 $(MAIN_I) -std=c99

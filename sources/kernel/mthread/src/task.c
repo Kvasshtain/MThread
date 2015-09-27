@@ -29,17 +29,8 @@ void eTask_Create(struct Task_Element *pTask_Element, void (*pTack)(void *pVoid)
     pTask_Element->pParameters = pParameters;
     pTask_Element->pTask_Descriptor = (descriptorTask)pTack;
 
-    // Инициализация стека задачи
-    pStack[-7] = (uint32_t)pParameters;
-    // Инициализация регистра -> LR
-    pStack[-2] = (uint32_t)pTack;
-    // Инициализация регистра -> PC
-    pStack[-1] = (uint32_t)pTack;
-    // Инициализация регистра -> PSR
-    pStack[0] = 0x01000000;
-
     // Текущий указатель на стек
-    pTask_Element->pStack_pointer = (pStack - 15);
+    pTask_Element->pStack_pointer = port_Initialise_Stack(pTack, pStack, Size_Stack, pParameters);
 }
 
 //------------------------------------------------------
@@ -51,7 +42,6 @@ uint8_t sTask_Switch(void)
     c ^= BIT0;
     return c;
 }
-
 
 //------------------------------------------------------
 // Выбирает задачу, затем вызывает переключение контекста
@@ -81,38 +71,29 @@ void sTask_Schedule(void)
 //------------------------------------------------------
 void eStart_Schedule(void)
 {
+    // Начальная инициализация
     sTask_Status.Task_Current = 0;
     sTask_Status.Task_Next = 0;
 
+    // Выбирает задачу, затем вызывает переключение контекста
     sTask_Switch();
-    //
+    // Текущая задача
     sTask_Status.Task_Current = sTask_Status.Task_Next;
     // Указатель на переменную в которую нужно сохранить текущие положение стека
     pPointer_Save_Context_Stask = &eTask_Element[sTask_Status.Task_Current].pStack_pointer;
     // Указатель на стек откуда нужно начать восстановление контекста
     pPointer_Load_Context_Stask = &eTask_Element[sTask_Status.Task_Next].pStack_pointer;
-     __set_PSP((uint32_t)(eTask_Element[sTask_Status.Task_Current].pStack_pointer + 8));
-
     // Копируем дескриптор потока
     sTask_Status.pTask_Descriptor = eTask_Element[sTask_Status.Task_Next].pTask_Descriptor;
-
-    SysTick_Config(8000);
-    NVIC_SetPriority(PendSV_IRQn, 0xff);
-    NVIC_SetPriority(SysTick_IRQn, 0xff);
+    // Запустить шедулер
+    port_Start_Schedule(eTask_Element[sTask_Status.Task_Current].pStack_pointer + 8);
 }
 
-//------------------------------------------------------
-// Прерывание системного таймера
-//------------------------------------------------------
-void SysTick_Handler(void)
-{
-    sTask_Schedule();
-}
 
 //------------------------------------------------------
 // Delay
 //------------------------------------------------------
 void Delay(uint32_t value)
 {
-    while(value--);
+    while(value--) PORT_ASM_NOP();
 }
