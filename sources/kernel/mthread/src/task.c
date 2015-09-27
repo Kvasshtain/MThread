@@ -88,12 +88,3 @@ void eStart_Schedule(void)
     // Запустить шедулер
     port_Start_Schedule(eTask_Element[sTask_Status.Task_Current].pStack_pointer + 8);
 }
-
-
-//------------------------------------------------------
-// Delay
-//------------------------------------------------------
-void Delay(uint32_t value)
-{
-    while(value--) PORT_ASM_NOP();
-}

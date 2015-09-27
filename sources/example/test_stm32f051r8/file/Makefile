@@ -58,13 +58,15 @@ MThread_I=$(MThread_p_port_I) $(MThread_p_mthread_I)
 MThread_inc= \
     $(MThread_p_port_inc)$(MThread_Platform)/portmacro.h \
 	$(MThread_p_mthread_inc)task.h \
-	$(MThread_p_mthread_inc)mutex.h
+	$(MThread_p_mthread_inc)mutex.h \
+	$(MThread_p_mthread_inc)delay.h
 	
 MThread_opj= \
 	port_s.o \
 	port_c.o \
 	task.o \
-	mutex.o
+	mutex.o \
+	delay.o
 
 
 
@@ -79,6 +81,9 @@ task.o: $(MThread_p_mthread_src)task.c $(MThread_inc)
 	
 mutex.o: $(MThread_p_mthread_src)mutex.c $(MThread_inc)
 	$(CC) $(COMPILOP) -c $(MThread_p_mthread_src)mutex.c -o mutex.o
+	
+delay.o: $(MThread_p_mthread_src)delay.c $(MThread_inc)
+	$(CC) $(COMPILOP) -c $(MThread_p_mthread_src)delay.c -o delay.o
 
 
 

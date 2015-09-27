@@ -62,9 +62,8 @@ void sTask_Schedule(void);
 // Запустить шедулер
 //------------------------------------------------------
 void eStart_Schedule(void);
-// Delay
-//------------------------------------------------------
-void Delay(uint32_t value);
+
+
 
 #endif // MTHREAD_CONFIG
 
