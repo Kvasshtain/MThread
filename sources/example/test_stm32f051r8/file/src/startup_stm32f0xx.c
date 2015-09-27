@@ -1,4 +1,4 @@
-#include "globalIncludeFile.h"
+#include "globalincludefile.h"
 #include "main.h"
 #include "phisic.h"
 

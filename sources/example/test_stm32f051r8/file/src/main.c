@@ -1,8 +1,8 @@
-#include "globalIncludeFile.h"
+#include "globalincludefile.h"
 #include "main.h"
 #include "phisic.h"
-#include <mthread_task.h>
-#include <mmutex.h>
+#include <task.h>
+#include <mutex.h>
 
 
 //------------------------------------------------------

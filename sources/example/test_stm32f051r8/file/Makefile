@@ -11,7 +11,6 @@ PATH_BIN   =$(PATH_PROJ)bin/
 PATH_SRC   =$(PATH_PROJ)src/
 PATH_INC   =$(PATH_PROJ)inc/
 
-
 CC         =$(TOOLCHAIN)arm-none-eabi-gcc
 AS         =$(TOOLCHAIN)arm-none-eabi-as
 LD         =$(TOOLCHAIN)arm-none-eabi-ld
@@ -19,15 +18,6 @@ OBJDUMP    =$(TOOLCHAIN)arm-none-eabi-objdump
 OBJCOPY    =$(TOOLCHAIN)arm-none-eabi-objcopy
 SIZE       =$(TOOLCHAIN)arm-none-eabi-size
 
-
-MAIN_I     =-I$(PATH_INC) \
-            -I$(PATH_INC)cmsis \
-			-I$(PATH_INC)cmsis/Include \
-            $(MThread_I)
-			
-COMPILOP   =-g -O0 -nostdlib -ffreestanding -Wall -mthumb  -mcpu=cortex-m0 $(MAIN_I) -std=c99
-ASMOP      =-g -Wall -mthumb  -mcpu=cortex-m0 $(MAIN_I)
-LINKOP     =-T link.ld -Map=$(PATH_BIN)$(NAMEPROJ).map
 
 
 #===========================================================================
@@ -40,39 +30,73 @@ LINKOP     =-T link.ld -Map=$(PATH_BIN)$(NAMEPROJ).map
 # ARM_CM4
 MThread_Platform=ARM_CM0
 
-MThread_p_inc=../../../kernel/mthread_inc/
-MThread_p_src=../../../kernel/mthread_src/
-MThread_I=-I$(MThread_p_inc) \
-          -I$(MThread_p_inc)portable \
-		  -I$(MThread_p_inc)portable/$(MThread_Platform)
-		   
+# Рабочий каталог
+MThread_p_port   =../../../kernel/portable/
+MThread_p_mthread=../../../kernel/mthread/
+
+# Дополнительные пути
+MThread_p_port_inc=$(MThread_p_port)inc/
+MThread_p_port_src=$(MThread_p_port)src/
+
+# Дополнительные включения
+MThread_p_port_I= \
+          -I$(MThread_p_port_inc) \
+		  -I$(MThread_p_port_inc)$(MThread_Platform)
+
+# Дополнительные пути
+MThread_p_mthread_inc=$(MThread_p_mthread)inc/
+MThread_p_mthread_src=$(MThread_p_mthread)src/
+
+# Дополнительные включения
+MThread_p_mthread_I= \
+          -I$(MThread_p_mthread_inc)
+		  
+# Дополнительные включения	  
+MThread_I=$(MThread_p_port_I) $(MThread_p_mthread_I)
+
+
 MThread_inc= \
-    $(MThread_p_inc)portable/$(MThread_Platform)/mthread_port.h \
-	$(MThread_p_inc)portable/$(MThread_Platform)/mthread_ports.h \
-	$(MThread_p_inc)portable/$(MThread_Platform)/port.h \
-	$(MThread_p_inc)mthread_task.h
+    $(MThread_p_port_inc)$(MThread_Platform)/portmacro.h \
+	$(MThread_p_mthread_inc)task.h \
+	$(MThread_p_mthread_inc)mutex.h
 	
 MThread_opj= \
-	mthread_port.o \
-	mthread_task.o \
-	mmutex.o
+	port.o \
+	task.o \
+	mutex.o
 
 
 
-mthread_port.o: $(MThread_p_src)portable/$(MThread_Platform)/mthread_port.s $(MThread_inc)
-	$(CC) $(COMPILOP) -c $(MThread_p_src)portable/$(MThread_Platform)/mthread_port.s -o mthread_port.o
+port.o: $(MThread_p_port_src)$(MThread_Platform)/port.s $(MThread_inc)
+	$(CC) $(COMPILOP) -c $(MThread_p_port_src)$(MThread_Platform)/port.s -o port.o
 
-mthread_task.o: $(MThread_p_src)mthread_task.c $(MThread_inc)
-	$(CC) $(COMPILOP) -c $(MThread_p_src)mthread_task.c -o mthread_task.o
+task.o: $(MThread_p_mthread_src)task.c $(MThread_inc)
+	$(CC) $(COMPILOP) -c $(MThread_p_mthread_src)task.c -o task.o
 	
-mmutex.o: $(MThread_p_src)mmutex.c $(MThread_inc)
-	$(CC) $(COMPILOP) -c $(MThread_p_src)mmutex.c -o mmutex.o
+mutex.o: $(MThread_p_mthread_src)mutex.c $(MThread_inc)
+	$(CC) $(COMPILOP) -c $(MThread_p_mthread_src)mutex.c -o mutex.o
+
+
+
+#===========================================================================
+# MAIN FLAGS COMPIL
+#===========================================================================
+MAIN_I     =-I$(PATH_INC) \
+            -I$(PATH_INC)cmsis \
+			-I$(PATH_INC)cmsis/Include \
+            $(MThread_I)
+			
+COMPILOP   =-g -O0 -nostdlib -ffreestanding -Wall -mthumb  -mcpu=cortex-m0 $(MAIN_I) -std=c99
+ASMOP      =-g -Wall -mthumb  -mcpu=cortex-m0 $(MAIN_I)
+LINKOP     =-T link.ld -Map=$(PATH_BIN)$(NAMEPROJ).map
+
+
 
 #===========================================================================
 # MAIN
 #===========================================================================
 AFINC= \
-	$(PATH_INC)globalIncludeFile.h \
+	$(PATH_INC)globalincludefile.h \
 	$(PATH_INC)main.h \
 	$(PATH_INC)startup_stm32f0xx.h \
 	$(PATH_INC)phisic.h
