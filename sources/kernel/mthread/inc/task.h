@@ -53,9 +53,6 @@ extern struct Task_Status sTask_Status;
 // pParameters      Аргумент потока             type -> void *
 //------------------------------------------------------
 void eTask_Create(struct Task_Element *pTask_Element, void (*pTack)(void *pVoid), uint32_t *pStack, uint32_t Size_Stack, void *pParameters);
-// Возвращает следующую задачу
-//------------------------------------------------------
-uint8_t sTask_Switch(void);
 // Выбирает задачу, затем вызывает переключение контекста
 //------------------------------------------------------
 void sTask_Schedule(void);

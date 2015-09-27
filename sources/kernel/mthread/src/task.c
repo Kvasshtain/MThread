@@ -1,5 +1,6 @@
 #include <portmacro.h>
 #include <task.h>
+#include <task_switch.h>
 
 /// Указатель на переменную в которую нужно сохранить текущие положение стека
 uint32_t **pPointer_Save_Context_Stask;
@@ -31,16 +32,6 @@ void eTask_Create(struct Task_Element *pTask_Element, void (*pTack)(void *pVoid)
 
     // Текущий указатель на стек
     pTask_Element->pStack_pointer = port_Initialise_Stack(pTack, pStack, Size_Stack, pParameters);
-}
-
-//------------------------------------------------------
-// Возвращает следующую задачу
-//------------------------------------------------------
-uint8_t sTask_Switch(void)
-{
-    static uint8_t c = 0;
-    c ^= BIT0;
-    return c;
 }
 
 //------------------------------------------------------
