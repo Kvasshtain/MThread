@@ -1,6 +1,6 @@
-#include "inc/globalIncludeFile.h"
-#include "inc/main.h"
-#include "inc/phisic.h"
+#include "globalIncludeFile.h"
+#include "main.h"
+#include "phisic.h"
 #include <mthread_task.h>
 #include <mmutex.h>
 
@@ -36,10 +36,7 @@ void PendSV_Start(void)
 }
 
 
-struct Mmutex MutexA = {
-    NULL,
-    0
-};
+struct Mmutex MutexA;
 
 uint32_t stack_a[64];
 uint32_t stack_b[64];
@@ -94,6 +91,7 @@ int main(void)
     //  Инициализация
     Init_Hardware();
 
+    eMutex_Create(&MutexA);
 
     eTask_Create(&eTask_Element[0], Thread_A, &stack_a[63], 64, &vA);
     eTask_Create(&eTask_Element[1], Thread_B, &stack_b[63], 64, &vB);

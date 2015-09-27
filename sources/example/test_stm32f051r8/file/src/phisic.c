@@ -1,6 +1,6 @@
-﻿#include "inc/globalIncludeFile.h"
-#include "inc/main.h"
-#include "inc/phisic.h"
+﻿#include "globalIncludeFile.h"
+#include "main.h"
+#include "phisic.h"
 
 /*
  * ЗАПОМНИ ! Сначала нужно включить тактирование модуля, а уж потом его инициализировать и так всегда !

@@ -20,7 +20,11 @@ OBJCOPY    =$(TOOLCHAIN)arm-none-eabi-objcopy
 SIZE       =$(TOOLCHAIN)arm-none-eabi-size
 
 
-MAIN_I     =-I$(PATH_INCLU) $(MThread_I)
+MAIN_I     =-I$(PATH_INC) \
+            -I$(PATH_INC)cmsis \
+			-I$(PATH_INC)cmsis/Include \
+            $(MThread_I)
+			
 COMPILOP   =-g -O0 -nostdlib -ffreestanding -Wall -mthumb  -mcpu=cortex-m0 $(MAIN_I) -std=c99
 ASMOP      =-g -Wall -mthumb  -mcpu=cortex-m0 $(MAIN_I)
 LINKOP     =-T link.ld -Map=$(PATH_BIN)$(NAMEPROJ).map
@@ -38,18 +42,22 @@ MThread_Platform=ARM_CM0
 
 MThread_p_inc=../../../kernel/mthread_inc/
 MThread_p_src=../../../kernel/mthread_src/
-MThread_I= -I$(MThread_p_inc) \
-           -I$(MThread_p_src) \
-           -I$(PATH_INC)
+MThread_I=-I$(MThread_p_inc) \
+          -I$(MThread_p_inc)portable \
+		  -I$(MThread_p_inc)portable/$(MThread_Platform)
 		   
 MThread_inc= \
+    $(MThread_p_inc)portable/$(MThread_Platform)/mthread_port.h \
+	$(MThread_p_inc)portable/$(MThread_Platform)/mthread_ports.h \
+	$(MThread_p_inc)portable/$(MThread_Platform)/port.h \
 	$(MThread_p_inc)mthread_task.h
 	
 MThread_opj= \
 	mthread_port.o \
 	mthread_task.o \
 	mmutex.o
-	
+
+
 
 mthread_port.o: $(MThread_p_src)portable/$(MThread_Platform)/mthread_port.s $(MThread_inc)
 	$(CC) $(COMPILOP) -c $(MThread_p_src)portable/$(MThread_Platform)/mthread_port.s -o mthread_port.o
@@ -104,4 +112,3 @@ main.o: $(PATH_SRC)main.c $(AFINC)
 clean:
 	-@rm *.o
 	-@$(SIZE) $(PATH_BIN)$(NAMEPROJ).elf
-

@@ -1,6 +1,6 @@
-#include "inc/globalIncludeFile.h"
-#include "inc/main.h"
-#include "inc/phisic.h"
+#include "globalIncludeFile.h"
+#include "main.h"
+#include "phisic.h"
 
 void HardFault_Handler(void)
 {

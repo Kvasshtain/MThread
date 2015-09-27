@@ -354,7 +354,7 @@ typedef enum IRQn
   * @}
   */
 
-#include "inc/cmsis/Include/core_cm0.h"
+#include "core_cm0.h"
 #include <stdint.h>
 
 /** @addtogroup Exported_types

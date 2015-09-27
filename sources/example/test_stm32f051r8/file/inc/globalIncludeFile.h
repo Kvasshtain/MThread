@@ -12,8 +12,8 @@
     |                       main.c   main.h                                 |
     +-----------------------------------------------------------------------+
 */
-#include "inc/cmsis/stm32f0xx.h"
-#include "inc/startup_stm32f0xx.h"
+#include "stm32f0xx.h"
+#include "startup_stm32f0xx.h"
 
 #define NULL                (0x0000)
 
