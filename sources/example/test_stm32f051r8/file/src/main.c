@@ -99,8 +99,8 @@ int main(void)
 
     eStart_Schedule();
 
-    while(1) {
 
+    while(1) {
 
     }
 }

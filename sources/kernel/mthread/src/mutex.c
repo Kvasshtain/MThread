@@ -21,7 +21,8 @@ void eMutex_Create(struct Mmutex *pMmutex)
 void eMutex_lock(struct Mmutex *pMmutex)
 {
     while(1) {
-        PORT_DISABLE_IRQ();
+        // Начало критической секции обеспечивающая атомарность
+        port_Start_Critical_Section_Mutex();
         // Свободный ?
         if(pMmutex->lock == NULL) {
             // Проверка, кто-то ожидает мьютекс ?
@@ -29,26 +30,28 @@ void eMutex_lock(struct Mmutex *pMmutex)
                 // Блокируем мьютекс
                 // Ресурс успешно занят
                 pMmutex->lock = sTask_Status.pTask_Descriptor;
-                PORT_ENABLE_IRQ();
-                return;
+                goto exit_critical;
             }
             pMmutex->Inquiry = NULL;
-            PORT_ENABLE_IRQ();
-            sTask_Schedule();
-            continue;
+            goto continue_critical;
         }
 
         // Занят нами ?
         if(pMmutex->lock == sTask_Status.pTask_Descriptor) {
-            PORT_ENABLE_IRQ();
-            return;
+            goto exit_critical;
         }
 
         pMmutex->Inquiry = 1;
-        PORT_ENABLE_IRQ();
+
+        continue_critical:
+        // Конец критической секции обеспечивающая атомарность
+        port_End_Critical_Section_Mutex();
         // Блокируем поток до тех пор пока не захватим мьютекс
         sTask_Schedule();
     }
+    exit_critical:
+    // Конец критической секции обеспечивающая атомарность
+    port_End_Critical_Section_Mutex();
 }
 
 //------------------------------------------------------
@@ -58,7 +61,8 @@ void eMutex_lock(struct Mmutex *pMmutex)
 //------------------------------------------------------
 uint8_t eMutex_try_lock(struct Mmutex *pMmutex)
 {
-    PORT_DISABLE_IRQ();
+    // Начало критической секции обеспечивающая атомарность
+    port_Start_Critical_Section_Mutex();
     // Свободный ?
     if(pMmutex->lock == NULL) {
         // Проверка, кто-то ожидает мьютекс ?
@@ -66,23 +70,29 @@ uint8_t eMutex_try_lock(struct Mmutex *pMmutex)
             // Блокируем мьютекс
             // Ресурс успешно занят
             pMmutex->lock = sTask_Status.pTask_Descriptor;
-            PORT_ENABLE_IRQ();
-            return 0;
+            goto exit_critical_true;
         }
         pMmutex->Inquiry = NULL;
-        PORT_ENABLE_IRQ();
+
+        // Конец критической секции обеспечивающая атомарность
+        port_End_Critical_Section_Mutex();
         sTask_Schedule();
         return -1;
     }
 
     // Занят нами ?
     if(pMmutex->lock == sTask_Status.pTask_Descriptor) {
-        PORT_ENABLE_IRQ();
-        return 0;
+        goto exit_critical_true;
     }
 
-    PORT_ENABLE_IRQ();
+    // Конец критической секции обеспечивающая атомарность
+    port_End_Critical_Section_Mutex();
     return -1;
+
+    exit_critical_true:
+    // Конец критической секции обеспечивающая атомарность
+    port_End_Critical_Section_Mutex();
+    return 0;
 }
 
 //------------------------------------------------------

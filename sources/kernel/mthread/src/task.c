@@ -39,7 +39,9 @@ void eTask_Create(struct Task_Element *pTask_Element, void (*pTack)(void *pVoid)
 //------------------------------------------------------
 void sTask_Schedule(void)
 {
-    SysTick->VAL   = 0;
+    // Начало критической секции обеспечивающая атомарность
+    port_Start_Critical_Section_Mutex();
+
     // Выбираем текущий поток
     sTask_Status.Task_Current = sTask_Status.Task_Next;
     // Выбираем задачу
@@ -53,8 +55,11 @@ void sTask_Schedule(void)
     // Копируем дескриптор потока
     sTask_Status.pTask_Descriptor = eTask_Element[sTask_Status.Task_Next].pTask_Descriptor;
 
-    // Start interrapt
-    SCB->ICSR |= BIT28;
+    // Конец критической секции обеспечивающая атомарность
+    port_End_Critical_Section_Mutex();
+
+    // Программное прерывание Schedule
+    port_Inquiry_Interruption();
 }
 
 //------------------------------------------------------

@@ -3,8 +3,6 @@
 
 #include "globalincludefile.h"
 
-#define PORT_DISABLE_IRQ()  {   __disable_irq();    }
-#define PORT_ENABLE_IRQ()   {   __enable_irq();     }
 #define PORT_ASM_NOP()      {  __ASM("nop");        }
 
 
@@ -16,6 +14,14 @@
 //------------------------------------------------------
 #define PORT_SCHEDULE_HANDLER   PendSV_Handler
 
+// Прерывание системного таймера
+//------------------------------------------------------
+void PORT_SYS_TICK_HANDLER(void);
+// Прерывание сохранение/восстановление контекста
+//------------------------------------------------------
+void PORT_SCHEDULE_HANDLER(void);
+
+
 
 
 // Инициализация стека задачи
@@ -24,14 +30,19 @@ uint32_t* port_Initialise_Stack(void (*pTack)(void *pVoid), uint32_t *pStack, ui
 // Запустить шедулер
 //------------------------------------------------------
 void port_Start_Schedule(uint32_t* pStack);
+// Программное прерывание Schedule
+//------------------------------------------------------
+void port_Inquiry_Interruption(void);
 
 
-// Прерывание системного таймера
+
+
+// Начало критической секции обеспечивающая атомарность
 //------------------------------------------------------
-void PORT_SYS_TICK_HANDLER(void);
-// Прерывание сохранение/восстановление контекста
+void port_Start_Critical_Section_Mutex(void);
+// Конец критической секции обеспечивающая атомарность
 //------------------------------------------------------
-void PORT_SCHEDULE_HANDLER(void);
+void port_End_Critical_Section_Mutex(void);
 
 
 
