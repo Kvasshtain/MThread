@@ -29,6 +29,8 @@ void eTask_Create(struct Task_Element *pTask_Element, void (*pTack)(void *pVoid)
     pTask_Element->Size_Stack = Size_Stack;
     pTask_Element->pParameters = pParameters;
     pTask_Element->pTask_Descriptor = (descriptorTask)pTack;
+    // Устанавливаем в начале приоритеты по дефолту
+    pTask_Element->Current_priority = pTask_Element->Setting_priority;
 
     // Текущий указатель на стек
     pTask_Element->pStack_pointer = port_Initialise_Stack(pTack, pStack, Size_Stack, pParameters);
