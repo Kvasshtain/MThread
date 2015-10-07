@@ -20,7 +20,7 @@ struct Task_Status sTask_Status;
 // Size_Stack       Размера стека в словах      type -> uint32_t
 // pParameters      Аргумент потока             type -> void *
 //------------------------------------------------------
-void eTask_Create(struct Task_Element *pTask_Element, void (*pTack)(void *pVoid), uint32_t *pStack, uint32_t Size_Stack, void *pParameters)
+void eTask_Create(struct Task_Element *pTask_Element, void (*pTack)(void *pVoid), uint32_t *pStack, uint32_t Size_Stack, void *pParameters, uint8_t priority)
 {
     // Проверка указателей и минимального размера стека
     if(!pTask_Element && !pTack && !pStack && (Size_Stack >= MINIMUM_SIZE_STACK_WORD)) return;
@@ -30,6 +30,7 @@ void eTask_Create(struct Task_Element *pTask_Element, void (*pTack)(void *pVoid)
     pTask_Element->pParameters = pParameters;
     pTask_Element->pTask_Descriptor = (descriptorTask)pTack;
     // Устанавливаем в начале приоритеты по дефолту
+    pTask_Element->Setting_priority = priority;
     pTask_Element->Current_priority = pTask_Element->Setting_priority;
 
     // Текущий указатель на стек
